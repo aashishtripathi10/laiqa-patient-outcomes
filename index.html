@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laiqa — Patient Outcomes Report</title>
+<style>
+  :root{
+    --ink:#1a1a2e; --muted:#5b5b6b; --line:#e6e6ee; --bg:#fafafc;
+    --brand:#7b2d6b; --brand2:#b5497f; --teal:#0e7c7b; --amber:#b9770e;
+    --good:#1f8a52; --good-bg:#e7f5ec; --warn-bg:#fdf3e3; --bad:#b23a48;
+    --chip:#f1eef4;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px 100px}
+  header.hero{background:linear-gradient(135deg,#3a1538 0%,#7b2d6b 55%,#b5497f 100%);
+    color:#fff;padding:54px 22px 46px;margin-bottom:0}
+  header.hero .inner{max-width:1040px;margin:0 auto}
+  header.hero .kicker{text-transform:uppercase;letter-spacing:.16em;font-size:12px;opacity:.8;margin:0 0 10px}
+  header.hero h1{font-size:34px;line-height:1.18;margin:0 0 14px;font-weight:700;max-width:780px}
+  header.hero p.sub{font-size:17px;opacity:.92;margin:0;max-width:740px}
+  header.hero .meta{margin-top:22px;font-size:13px;opacity:.8;display:flex;flex-wrap:wrap;gap:8px 22px}
+  .banner{border-radius:12px;padding:16px 18px;margin:26px 0;font-size:14.5px;line-height:1.55}
+  .banner.caveat{background:var(--warn-bg);border:1px solid #e6c98a}
+  .banner.caveat b{color:var(--amber)}
+  .banner.thesis{background:#f3eef5;border:1px solid #d9c4d6}
+  .banner.thesis b{color:var(--brand)}
+  section{margin:46px 0 0}
+  h2{font-size:25px;margin:0 0 4px;padding-top:14px;font-weight:700;letter-spacing:-.01em}
+  h2 .num{color:var(--brand2);font-weight:800;margin-right:10px}
+  h2 + .lede{color:var(--muted);margin:0 0 22px;font-size:16px;max-width:800px}
+  h3{font-size:18px;margin:32px 0 10px;font-weight:700}
+  h4{font-size:14px;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);margin:24px 0 8px}
+  p{margin:0 0 14px}
+  .grid{display:grid;gap:16px}
+  .kpis{grid-template-columns:repeat(4,1fr);margin:8px 0 6px}
+  @media(max-width:780px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 16px}
+  .kpi .big{font-size:30px;font-weight:800;color:var(--brand);line-height:1.05}
+  .kpi .lbl{font-size:13px;color:var(--muted);margin-top:6px}
+  .kpi.alt .big{color:var(--teal)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:8px 0 6px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  .bar-row{display:grid;grid-template-columns:180px 1fr 56px;align-items:center;gap:12px;margin:7px 0;font-size:14px}
+  .bar-row .name{color:var(--ink)}
+  .bar-track{background:#f0eef3;border-radius:7px;height:20px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:7px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+  .bar-fill.teal{background:linear-gradient(90deg,#0e7c7b,#39b0a6)}
+  .bar-row .val{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .split3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+  @media(max-width:780px){.split,.split3{grid-template-columns:1fr}}
+  .pill{display:inline-block;background:var(--chip);color:var(--brand);border-radius:999px;
+    padding:3px 11px;font-size:12.5px;font-weight:600;margin:0 6px 6px 0}
+  .tag-good{background:var(--good-bg);color:var(--good)}
+  .quote{border-left:3px solid var(--brand2);padding:4px 0 4px 16px;margin:14px 0;color:#3a3a48;font-style:italic}
+  .quote span{display:block;font-style:normal;font-size:13px;color:var(--muted);margin-top:4px}
+  .case{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff;margin:12px 0}
+  .case h4{margin:0 0 4px;color:var(--ink);text-transform:none;letter-spacing:0;font-size:16px;font-weight:700}
+  .case .cond{font-size:13px;color:var(--muted);margin-bottom:10px}
+  .deltas{display:flex;flex-wrap:wrap;gap:8px}
+  .delta{font-size:13px;background:var(--good-bg);color:var(--good);border-radius:8px;padding:5px 10px;font-weight:600}
+  .delta.neutral{background:#eef1f6;color:#3a3a48}
+  .foot{margin-top:60px;border-top:1px solid var(--line);padding-top:22px;font-size:13px;color:var(--muted)}
+  .toc{font-size:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 20px;margin:26px 0}
+  .toc a{color:var(--brand);text-decoration:none;margin-right:16px;white-space:nowrap;display:inline-block;margin-bottom:4px}
+  .toc a:hover{text-decoration:underline}
+  .src{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .two-col-note{font-size:13.5px;color:var(--muted)}
+  strong.hl{color:var(--brand)}
+  ul{margin:0 0 14px;padding-left:20px} li{margin:3px 0}
+  .lab{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+    padding:2px 8px;border-radius:6px;background:var(--chip);color:var(--brand);vertical-align:middle}
+  .lab.obj{background:#e3f2f1;color:var(--teal)} .lab.sub{background:#f3eef5;color:var(--brand2)}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="inner">
+    <p class="kicker">Laiqa Wellness · Patient Outcomes Report</p>
+    <h1>Patient outcomes from the Laiqa hormonal-health programme.</h1>
+    <p class="sub">A consolidated read of the Laiqa hormonal-health programme: who we saw, <em>how</em> we measure and personalise care, and the outcomes produced — across the full patient population, paid and unpaid alike. The thesis is protocol quality, not payment status.</p>
+    <div class="meta">
+      <span>Data window: <b>Jun 2024 → Jun 2026</b></span>
+      <span>Compiled: <b>9 Jun 2026</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="banner thesis">
+    <b>What this report argues, and on what evidence.</b> Laiqa's protocol is <strong class="hl">rigorous</strong> (a measured, personalised, clinically-governed engine — Sections 03–04), <strong class="hl">evidence-grounded</strong> (Section 09), and produces <strong class="hl">real outcomes</strong> (Sections 05–08) across symptoms, objective cycle data, and validated questionnaires. Because protocol quality is independent of who paid, the evidence population is <em>everyone the programme treated</em> — free-trial, unpaid, and paid — with each statistic labelled by its own denominator and method.
+  </div>
+
+  <div class="banner caveat">
+    <b>Evidence discipline (read once).</b> This describes the <b>pre-restructure (7 Apr 2026) clinician-led programme</b> plus the May-2026 WhatsApp relaunch where noted. It is real-world clinical-operations data, <b>not an RCT</b>: no control arm, no blinding, no pre-registration. Three integrity rules are enforced throughout: <b>(1)</b> outcome rates are computed from clinician-documented symptom resolution — any rate tied to a diagnostic label rather than an observed symptom is excluded; <b>(2)</b> thyroid biomarker deltas are <b>co-medication-confounded</b> (levothyroxine concurrent in the cohort) and are shown illustratively, never as protocol-attributable; <b>(3)</b> outcome rates are shown per-completer <em>and</em> intention-to-treat where the completion denominator is known. Statistics tagged <span class="lab obj">objective</span> are computed from device/lab data; <span class="lab sub">self-report</span> from clinician notes or questionnaires.
+  </div>
+
+  <div class="banner caveat" style="border-color:#8a6d3b">
+    <b>How independent is this evidence?</b> This is a clinical case series from our earlier clinician-led programme, not a trial: no control arm, no blinding, no pre-registration. Outcomes were recorded at the month-1 clinic check-in by the treating clinicians — the team that delivered the protocols also marked the outcomes — so please read the rates as our own clinical documentation, not independent adjudication. Closing that independence gap is exactly what the forward clinical programme is being built for.
+  </div>
+
+  <div class="toc">
+    <strong>Contents:</strong>
+    <a href="#cohort">01 Cohort &amp; dataset</a>
+    <a href="#came-for">02 What patients came for</a>
+    <a href="#measure">03 How we measure</a>
+    <a href="#personalise">04 How we personalise</a>
+    <a href="#objective">05 Objective outcomes</a>
+    <a href="#symptoms">06 Symptom resolution</a>
+    <a href="#biomarkers">07 Biomarkers</a>
+    <a href="#b2b">08 B2B cohorts</a>
+    <a href="#evidence">09 Evidence basis</a>
+    <a href="#retention">10 Completion &amp; renewal</a>
+    <a href="#limits">11 Safety &amp; limitations</a>
+  </div>
+
+  <!-- ===================== 01 COHORT ===================== -->
+  <section id="cohort">
+    <h2><span class="num">01</span>The cohort &amp; dataset</h2>
+    <p class="lede">The programme's evidence base is one of the rare longitudinal datasets of Indian women on the PMOS (formerly PCOS) / hormonal-metabolic spectrum, followed by Ayurvedic doctors across multiple visits. Per the protocol-quality objective, the <strong class="hl">full treated population is in scope</strong> — payment only changes plan duration, not the protocol delivered.</p>
+    <div class="grid kpis">
+      <div class="kpi"><div class="big">1,428</div><div class="lbl">users with usable clinical signal (paid + unpaid + free-trial)</div></div>
+      <div class="kpi"><div class="big">859</div><div class="lbl">with ≥1 doctor consultation</div></div>
+      <div class="kpi"><div class="big">763</div><div class="lbl">tracking period cycles (objective signal)</div></div>
+      <div class="kpi"><div class="big">~2,900</div><div class="lbl">logged consultations · 4,295 clinician notes</div></div>
+      <div class="kpi alt"><div class="big">947</div><div class="lbl">strict paying patients (Aug '24–Jun '26)</div></div>
+      <div class="kpi alt"><div class="big">385</div><div class="lbl">with computed BMI — baseline profile</div></div>
+      <div class="kpi alt"><div class="big">8,240</div><div class="lbl">onboarding Q&amp;A responses captured</div></div>
+      <div class="kpi alt"><div class="big">3</div><div class="lbl">doctors core to the historical cohort (5 across full period)</div></div>
+    </div>
+
+    <h3>Baseline profile — who these women are</h3>
+    <div class="split">
+      <div class="card">
+        <h4>BMI at intake (n=385)</h4>
+        <div class="bar-row"><span class="name">Underweight (&lt;18.5)</span><div class="bar-track"><div class="bar-fill" style="width:3.6%"></div></div><span class="val">3.6%</span></div>
+        <div class="bar-row"><span class="name">Normal (18.5–24.9)</span><div class="bar-track"><div class="bar-fill" style="width:34%"></div></div><span class="val">34%</span></div>
+        <div class="bar-row"><span class="name">Overweight (25–29.9)</span><div class="bar-track"><div class="bar-fill" style="width:36.9%"></div></div><span class="val">36.9%</span></div>
+        <div class="bar-row"><span class="name">Obese (≥30)</span><div class="bar-track"><div class="bar-fill" style="width:25.5%"></div></div><span class="val">25.5%</span></div>
+        <p class="two-col-note" style="margin:8px 0 0">Mean BMI <b>26.9</b>; <b>62% above normal weight</b>. Weight loss is the dominant fitness goal.</p>
+      </div>
+      <div class="card">
+        <h4>A payment-agnostic evidence population</h4>
+        <p class="two-col-note" style="margin:0 0 8px">Free-trial and unpaid users receive the <em>same</em> first-line protocol (seed cycling, induction agents, detox, Kanchanar): the <b>frequency of these prescriptions in clinician notes is comparable across paid and unpaid users</b>. The documented difference is follow-up duration and consultation cadence, not the first-line protocol itself. So an unpaid user's improvement is valid evidence of protocol quality — with the honest caveat that the parity evidence is prescription-frequency, not a full plan-depth audit.</p>
+        <p class="two-col-note" style="margin:0">Each outcome below names its own n and method; the paid book (947 strict) is one layer within the wider treated population, not the boundary of the evidence.</p>
+      </div>
+    </div>
+    <p class="src">Source: <code>sources/Laiqa Clinical Agent Training.md</code> §2 (prod-DB population, BMI, herb-frequency parity) · consultation/notes counts DB-verified per <code>research/applications/…series-a-deck</code> (2,885 consult records / 861 users / May 2024–Jun 2026; "509 transcripts" was a spreadsheet artefact, now superseded) · paid count 947 strict (894 paid-B2C &gt;₹500 + 77 B2B − 24 both).</p>
+  </section>
+
+  <!-- ===================== 02 CAME FOR ===================== -->
+  <section id="came-for">
+    <h2><span class="num">02</span>What patients came to us for</h2>
+    <p class="lede">123 distinct concerns across 4,431 records. The profile is unmistakably the <strong class="hl">PMOS / metabolic–hormonal cluster</strong> — weight, gut, sleep, stress and cycle dysfunction, tightly interwoven. Combined PMOS+PCOD (144 mentions) is the modal diagnosis; menstrual dysfunction (irregular + dysmenorrhea + scanty ≈ 130) is near-universal.</p>
+    <div class="card">
+      <h4>Top 15 presenting concerns (by record count)</h4>
+      <div class="bar-row"><span class="name">Weight gain</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="val">359</span></div>
+      <div class="bar-row"><span class="name">Bloating</span><div class="bar-track"><div class="bar-fill" style="width:98%"></div></div><span class="val">352</span></div>
+      <div class="bar-row"><span class="name">Insomnia / sleep</span><div class="bar-track"><div class="bar-fill" style="width:90.5%"></div></div><span class="val">325</span></div>
+      <div class="bar-row"><span class="name">Stress</span><div class="bar-track"><div class="bar-fill" style="width:88.9%"></div></div><span class="val">319</span></div>
+      <div class="bar-row"><span class="name">Irregular cycles</span><div class="bar-track"><div class="bar-fill" style="width:70.2%"></div></div><span class="val">252</span></div>
+      <div class="bar-row"><span class="name">PMOS / PCOD-PCOS</span><div class="bar-track"><div class="bar-fill" style="width:66.3%"></div></div><span class="val">238</span></div>
+      <div class="bar-row"><span class="name">Hair fall</span><div class="bar-track"><div class="bar-fill" style="width:47.4%"></div></div><span class="val">170</span></div>
+      <div class="bar-row"><span class="name">Acidity</span><div class="bar-track"><div class="bar-fill" style="width:47.1%"></div></div><span class="val">169</span></div>
+      <div class="bar-row"><span class="name">Dysmenorrhea</span><div class="bar-track"><div class="bar-fill" style="width:46%"></div></div><span class="val">165</span></div>
+      <div class="bar-row"><span class="name">Constipation</span><div class="bar-track"><div class="bar-fill" style="width:39.3%"></div></div><span class="val">141</span></div>
+      <div class="bar-row"><span class="name">Hirsutism</span><div class="bar-track"><div class="bar-fill" style="width:35.1%"></div></div><span class="val">126</span></div>
+      <div class="bar-row"><span class="name">Low energy</span><div class="bar-track"><div class="bar-fill" style="width:34.3%"></div></div><span class="val">123</span></div>
+      <div class="bar-row"><span class="name">Acne</span><div class="bar-track"><div class="bar-fill" style="width:33.7%"></div></div><span class="val">121</span></div>
+      <div class="bar-row"><span class="name">Hypothyroidism</span><div class="bar-track"><div class="bar-fill" style="width:26.5%"></div></div><span class="val">95</span></div>
+      <div class="bar-row"><span class="name">Mood swings</span><div class="bar-track"><div class="bar-fill" style="width:26.5%"></div></div><span class="val">95</span></div>
+    </div>
+    <p>Mean intake severity was <strong class="hl">7.76 / 10</strong> across 4,377 scored records — these were women in real distress, not curious browsers. Highest-severity conditions: primary infertility (8.76), PMOS (8.74), hair thinning (8.61), weight management (8.57), hypothyroidism (8.49). And the concerns cluster: <strong class="hl">bloating is the universal #1–2 secondary</strong> regardless of the primary, and PMOS-primary patients show markedly elevated stress co-occurrence (107 obs across 94 patients) — the HPA-axis signal that the protocol's stress/cortisol arm is built around.</p>
+    <p class="src">Source: <code>sources/research/patient-concerns-deep-read.md</code> §2, §9. Severity is best read as banded (57% of scores sit at "9" — an intake-UI anchor), not a precise scalar.</p>
+  </section>
+
+  <!-- ===================== 03 HOW WE MEASURE ===================== -->
+  <section id="measure">
+    <h2><span class="num">03</span>How we measured — the evidence instruments</h2>
+    <p class="lede">The historical outcomes in this report came from four distinct measurement instruments, each with a different evidence quality. Understanding which instrument backs which claim is essential to reading the numbers correctly.</p>
+    <div class="grid" style="grid-template-columns:repeat(2,1fr);gap:16px">
+      <div class="card">
+        <h4><span class="lab obj">Objective</span> App-tracked cycle dates</h4>
+        <p class="two-col-note" style="margin:0">Period start/end dates logged directly in the app by 763 users. Cycle-length standard deviation computed from production <code>period_cycles</code> table — no self-report, no clinician interpretation. The most defensible signal in this report. Used in §05.</p>
+      </div>
+      <div class="card">
+        <h4><span class="lab obj">Objective</span> Before/after lab panels</h4>
+        <p class="two-col-note" style="margin:0">HbA1c, prolactin, AMH, SGOT/SGPT, vitamin D, uric acid, USG imaging — drawn from actual lab reports attached to patient consultations. Curated from ~29 cases; small, cherry-picked, no control arm. Used in §07.</p>
+      </div>
+      <div class="card">
+        <h4><span class="lab sub">Self-report</span> Clinician symptom notes</h4>
+        <p class="two-col-note" style="margin:0">Doctors marked which concerns were present or resolved at each follow-up visit. The backbone of the n=180 symptom-resolution data (§06). Subject to logging-mode variation (status-list vs narrative) and the logging-artefact caveat in §06.</p>
+      </div>
+      <div class="card">
+        <h4><span class="lab sub">Self-report</span> Validated questionnaires — B2B only</h4>
+        <p class="two-col-note" style="margin:0">MWQ (Menstrual Wellness Questionnaire) and LQ (Lifestyle Quotient) — internal Laiqa self-report questionnaires administered before/after to Deloitte and Advatix cohorts. They embed some established sub-scales (Perceived Stress Scale, SATED sleep), but the composites are not externally validated or published — treat as consistent self-report deltas, not published-instrument scores.</p>
+      </div>
+    </div>
+    <p class="src">The <strong class="hl">PMOS Health Score</strong> — a clinician-designed 0–100 weighted composite across 6 dimensions (symptoms 20%, weight 20%, sleep/stress/cycle/lifestyle 15% each) — is the next-generation outcome instrument, methodology signed off by Dr. Nivedita. It did <em>not</em> measure the historical cohort in this report. Source: <code>wiki/clinical/health-score.md</code>, <code>wiki/clinical/measurement-matrix.md</code>.</p>
+  </section>
+
+  <!-- ===================== 04 HOW WE PERSONALISE ===================== -->
+  <section id="personalise">
+    <h2><span class="num">04</span>How we personalise — the driver engine</h2>
+    <p class="lede">The protocol's defining feature is that it <strong class="hl">treats the driver, not the disease label</strong>. One engine collapses PMOS, hypothyroid, endometriosis, amenorrhea, NAFLD and IBS into five root drivers, then sequences a personalised plan with documented decision rules, safety gates and conflict resolution. This is the single strongest body of protocol-quality evidence in the knowledge base.</p>
+    <div class="split3">
+      <div class="card"><h4>5 root drivers</h4><p class="two-col-note" style="margin:0">Insulin · Cortisol · Inflammatory/Androgen · Gut · Thyroid. Signal-weighted scoring (e.g. sugar cravings +3 insulin, abnormal TSH +3 thyroid). <b>1 primary + 1 secondary</b> per user; primary confirmed by a <b>2-of-3 signal cluster</b> (false-positive guard); labs override symptoms (fasting insulin ≥15 → insulin-primary).</p></div>
+      <div class="card"><h4>Disciplined timeline</h4><p class="two-col-note" style="margin:0">Observe-only week 1 · earliest layering day 14 · primary-driver change <b>only</b> at day 28 and only on high-compliance + zero-improvement. Compliance zones: ≥80% clear / 50–79% clinician judgement / &lt;50% simplify. <em>"A plan 60% followed is not a failed plan — it's an untested one."</em></p></div>
+      <div class="card"><h4>Conflict resolution</h4><p class="two-col-note" style="margin:0">All 10 driver pairs have documented conflicts + week-by-week sequencing (insulin+thyroid: carb-restrict vs T3-suppress → 40–42% carb). 4-level tiebreaker: safety → most-suffering → most-recent-change → least-restrictive. Second axis: <b>dosha decides food <em>form</em>, driver decides food <em>selection</em></b>.</p></div>
+    </div>
+    <p>Care is multi-modal and safety-gated end to end: a red-flag screen at intake (TSH &gt;50, myxoedema flags), per-instance <strong class="hl">CDP clinician approval</strong> for medicines/supplements, and pre-specified <strong class="hl">healing arcs</strong> that set outcome expectations honestly — for stress-driven amenorrhea, "period regulation is the <em>last</em> thing to return: expect 8–12 weeks, not 2." Outcome timelines are clinical, not marketing.</p>
+    <p class="src">Source: <code>wiki/clinical/</code> — <code>drivers.md</code>, <code>driver-change-rules.md</code>, <code>driver-combinations.md</code>, <code>decision-tree.md</code>, <code>dosha-overlay.md</code>, <code>diet-protocol.md</code>; condition packs add a validated <b>25-item Perimenopause Assessment Scale + STRAW+10 staging</b> (<code>conditions/perimenopause.md</code>) and subtype→driver routing for hypothyroid/amenorrhea. The measurement layer for this engine — the PMOS Health Score and its signal source-of-truth matrix — is clinician-designed and ready for build; see §03.</p>
+  </section>
+
+  <!-- ===================== 05 OBJECTIVE OUTCOMES ===================== -->
+  <section id="objective">
+    <h2><span class="num">05</span>Outcomes — objective signal <span class="lab obj">objective</span></h2>
+    <p class="lede">The one outcome computed from the production database rather than clinician notes: <strong class="hl">app-tracked menstrual cycle dates</strong>. Regularity = cycle-length standard deviation under 5 days, the programme's own pre-specified definition of "treatment working." Every figure below is reproducible from a query saved alongside this report — no number here is unverifiable.</p>
+    <div class="grid kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi alt"><div class="big">41%</div><div class="lbl"><b>37 of 90</b> users with ≥3 logged cycles show regular cycle length (SD&lt;5d). <b>53% (24 of 45)</b> among those with ≥4 cycles.</div></div>
+      <div class="kpi alt"><div class="big">current-state</div><div class="lbl">This is a snapshot of who <em>is</em> regular now — <b>not</b> proof the programme made them regular. No baseline control.</div></div>
+      <div class="kpi alt"><div class="big">no signal yet</div><div class="lbl">Paired within-user test (early vs late cycles, n=23): SD improved in 11/23 = 48% — indistinguishable from chance. Causation <b>not</b> established.</div></div>
+    </div>
+    <div class="banner caveat" style="margin-top:18px">
+      <b>Read this honestly — it is the most rigorous thing in the report.</b> Roughly <b>41–53%</b> of users with enough logged cycles have regular cycle length (the range spans the ≥3 vs ≥4-cycle thresholds). This is a <em>current-state descriptive</em> statistic: it says these women have regular cycles, not that Laiqa regularised them. We ran the harder causal test — does each woman's cycle variability fall from her early cycles to her later ones? — and on the n=23 with enough data it does not yet show a signal (48%, a coin-flip). We are reporting this rather than a more flattering number on purpose: an earlier internal "64%" figure could not be reproduced from the current data under any standard method (the ceiling across eight definitions is 57.8%), so it has been retired. The defensible objective claim today is "a plausible share of trackable users have regular cycles; the protocol's causal effect on regularity is not yet proven and needs the larger post-launch cohort." Cycle regularity is the right endpoint — we just don't yet have the controlled data to claim causation on it.
+    </div>
+    <p class="src">Source: prod <code>period_cycles</code>, re-run transparently 2026-06-10; full SQL saved at <code>outputs/cycle-regularity-queries.sql</code> + reconciliation across 8 metric definitions at <code>outputs/cycle-regularity-reconcile.sql</code>. Method: cycle length = gap between consecutive <code>period_start</code> dates, filtered to 10–120d (excludes double-logged spotting and tracking breaks), sample standard deviation. The retired "64% of 39" (2026-06-06) had no saved query and no reconstructable cohort.</p>
+  </section>
+
+  <!-- ===================== 06 SYMPTOM RESOLUTION ===================== -->
+  <section id="symptoms">
+    <h2><span class="num">06</span>Outcomes — symptom resolution <span class="lab sub">self-report</span></h2>
+    <p class="lede">Clinician-marked 1-month resolution across <strong class="hl">n=180 patients with a logged follow-up</strong> (re-validated 3 Jun 2026). Shown per-completer <em>and</em> intention-to-treat (patients without a recorded follow-up endpoint are counted as unresolved). A diligence reader should anchor on ITT.</p>
+    <table>
+      <tr><th>Symptom cluster</th><th class="num">Of those followed up</th><th class="num">Intention-to-treat*</th></tr>
+      <tr><td>Hair fall</td><td class="num"><b>87%</b></td><td class="num" style="color:var(--teal)">~74%</td></tr>
+      <tr><td>Acne</td><td class="num"><b>86%</b></td><td class="num" style="color:var(--teal)">~73%</td></tr>
+      <tr><td>Irregular periods</td><td class="num"><b>84%</b></td><td class="num" style="color:var(--teal)">~72%</td></tr>
+      <tr><td>Stress / mood</td><td class="num"><b>64%</b></td><td class="num" style="color:var(--teal)">~55%</td></tr>
+      <tr><td>Weight gain</td><td class="num"><b>47%</b></td><td class="num" style="color:var(--teal)">~40%</td></tr>
+      <tr><td>Sleep</td><td class="num"><b>47%</b></td><td class="num" style="color:var(--teal)">~40%</td></tr>
+      <tr><td>Low energy</td><td class="num"><b>30%</b></td><td class="num" style="color:var(--teal)">~26%</td></tr>
+      <tr><td>Acidity</td><td class="num"><b>28%</b></td><td class="num" style="color:var(--teal)">~24%</td></tr>
+      <tr><td>Bloating</td><td class="num"><b>20%</b></td><td class="num" style="color:var(--teal)">~17%</td></tr>
+    </table>
+    <p class="src">*ITT computed on the measured follow-up rate from this cohort: <b>85.2% of 1-month-plan patients had their endpoint logged (92 of 108 starters)</b>. ITT = per-completer rate × 85.2%, with non-followed-up counted as unresolved. Source: <code>sources/research/mom-improvement-outcomes.md</code> §7 (85.2% endpoint-data coverage on 1m plans) + §3 (resolution rates). <b>Note:</b> hair fall/acne resolve highest partly because chronic diagnoses are logged once at baseline; the actively re-asked symptomatic complaints (bloating ~17%, acidity ~24%) are the <em>most reliable</em> signal.</p>
+
+    <h3>Improvement among <em>continuing</em> members rises after month 1 — survivorship applies</h3>
+    <p>The share of continuing members with explicit clinician-documented improvement, by months on programme:</p>
+    <div class="card">
+      <h4>Patients showing improvement, by months on programme</h4>
+      <div class="bar-row"><span class="name">1 month (n=180)</span><div class="bar-track"><div class="bar-fill teal" style="width:33%"></div></div><span class="val">11%</span></div>
+      <div class="bar-row"><span class="name">2 months (n=31)</span><div class="bar-track"><div class="bar-fill teal" style="width:97%"></div></div><span class="val">32%</span></div>
+      <div class="bar-row"><span class="name">3 months (n=24)</span><div class="bar-track"><div class="bar-fill teal" style="width:88%"></div></div><span class="val">29%</span></div>
+      <div class="bar-row"><span class="name">4 months (n=15)</span><div class="bar-track"><div class="bar-fill teal" style="width:100%"></div></div><span class="val">33%</span></div>
+      <p class="two-col-note" style="margin:8px 0 0">This is the strict verb-based measure (improvement only counted when a doctor wrote an explicit positive note), so it floors low. n shrinks with tenure (most plans were 1-month), so months 2–4 are directional.</p>
+    </div>
+    <p>The clinician's expected timeline matches: wk 1–2 sleep/energy → wk 3–4 hair/skin → wk 4–6 first weight/inch loss → wk 6–8 first on-time cycle → wk 8–12 labs move → wk 12+ cycle stabilisation → wk 12–24 fibroids/fatty-liver respond. Short-tenure cohorts (the metabolic group at ~40-day mean tenure) look weak precisely because they haven't reached their endpoints yet.</p>
+    <p class="src">Source: <code>mom-improvement-outcomes.md</code> §3 (patient-level positive-language rate by checkpoint); clinician timeline from <code>sources/Laiqa Clinical Agent Training.md</code> §14.6.</p>
+  </section>
+
+  <!-- ===================== 07 BIOMARKERS ===================== -->
+  <section id="biomarkers">
+    <h2><span class="num">07</span>Outcomes — paired biomarkers &amp; imaging <span class="lab sub">curated</span></h2>
+    <p class="lede">For a curated set (≈29 cases) we hold objective before/after labs and imaging — the bridge from "symptoms improved" to biomarker-grade evidence. These are <em>clinician-selected positive cases</em>, not a random sample: read as existence-proof, not prevalence.</p>
+    <div class="card">
+      <table>
+        <tr><th>Marker</th><th>Baseline</th><th>Follow-up</th><th>Window</th></tr>
+        <tr><td>HbA1c (prediabetic → normal)</td><td class="num">6.2</td><td class="num">5.5</td><td>~3 mo</td></tr>
+        <tr><td>HbA1c</td><td class="num">6.9</td><td class="num">6.2</td><td>~7 wks (90-day programme)</td></tr>
+        <tr><td>Prolactin (hyperprolactinemia)</td><td class="num">85.7</td><td class="num">44.5</td><td>4 mo</td></tr>
+        <tr><td>AMH (low ovarian reserve)</td><td class="num">0.396</td><td class="num">0.81</td><td>4 mo</td></tr>
+        <tr><td colspan="4" style="font-size:12px;color:#8a9299;font-style:italic">*AMH rise consistent with ovulatory recovery following prolactin normalisation; not presented as reversal of low ovarian reserve.</td></tr>
+        <tr><td>SGOT / SGPT (liver)</td><td class="num">66 / 134</td><td class="num">33 / 79</td><td>~2 mo</td></tr>
+        <tr><td>SGPT (separate case)</td><td class="num">68</td><td class="num">15</td><td>~3 mo</td></tr>
+        <tr><td>Vitamin D</td><td class="num">13.9</td><td class="num">36.6</td><td>~3 mo</td></tr>
+        <tr><td>Uric acid</td><td class="num">7.2</td><td class="num">6.6</td><td>~2 mo</td></tr>
+        <tr><td>USG: Grade-1 fatty liver (3 cases)</td><td colspan="2">present → resolved on follow-up imaging</td><td>2–6 mo</td></tr>
+        <tr><td>USG: PCOD ovarian morphology (2 cases)</td><td colspan="2">bulky/PCOD → normal volume</td><td>2–6 mo</td></tr>
+        <tr><td>USG: left ovarian cyst</td><td class="num">7×5 cm</td><td class="num">4.6×5.5 cm</td><td>6 mo</td></tr>
+      </table>
+    </div>
+    <p class="two-col-note">The strongest objective endpoints here are the <strong class="hl">imaging-confirmed reversals</strong> (fatty liver, PCOD morphology, cyst shrinkage) and the AMH/prolactin pair — these are harder to attribute to logging style than symptom notes.</p>
+    <div class="banner caveat" style="margin-top:8px">
+      <b>Thyroid deltas are shown illustratively only.</b> All thyroid biomarker movement in this cohort is co-medication-confounded: the standard-of-care in this programme is to layer Ayurvedic support alongside the patient's existing levothyroxine, and in cases where labs don't improve, the clinical team recommends adding allopathic thyroid medication. TSH changes therefore reflect combined treatment, not the Ayurvedic protocol in isolation, and are not cited as protocol-attributable outcomes anywhere in this report. <b>The same discipline applies to the metabolic rows above (HbA1c, liver enzymes, lipids):</b> no concurrent metformin or anti-diabetic medication is documented for those cases, but it is not excluded either — read all biomarker deltas as case evidence, not protocol-attributable.
+    </div>
+    <p class="src">Source: <code>sources/Case Studies Final Deck.pptx</code> (full per-case lab panels, dosha Dx, named formulations) + <code>traction.md</code> §3.4. Caveats: cherry-picked, co-medication undocumented per case, imaging non-standardised, no control arm.</p>
+
+    <h3>What the sequence looks like in one patient</h3>
+    <p>Aggregate rates and lab tables don't show the <em>mechanism</em> — the §04 driver sequence actually playing out over months. Two fully-dated arcs (clinician-selected, ~70% compliance) make it concrete: improvement arrives in the pre-specified order, and medication dependency falls as the protocol takes hold.</p>
+    <div class="split">
+      <div class="case">
+        <h4>Long-case A — PMOS + secondary amenorrhea (B2C, Dec 2024 → ongoing, de-identified)</h4>
+        <div class="cond">Medically-induced cycles + psoriasis + weight gain → dated cycle recovery + 16 kg loss</div>
+        <div class="deltas">
+          <span class="delta">Induced → natural cycles within ~6 months; last three cycles unmedicated</span>
+          <span class="delta">Dependency fell: "with Rajapravartini" → "1 tablet" → <b>no medicine</b></span>
+          <span class="delta">80 → 64 kg (−16 kg, 10 mo)</span>
+          <span class="delta">Psoriasis rashes reduced; bloating resolved</span>
+        </div>
+      </div>
+      <div class="case">
+        <h4>Long-case B — PMOS + hypothyroid + diabetes + Grade-2 fatty liver (B2C, ~7 wks, de-identified)</h4>
+        <div class="cond">Multi-condition metabolic — paired biomarker panel improved together</div>
+        <div class="deltas">
+          <span class="delta">−6 kg in 7 weeks; waist −3″</span>
+          <span class="delta">HbA1c 6.9 → 6.2</span>
+          <span class="delta">SGOT/SGPT 66/134 → 33/79</span>
+          <span class="delta">Cholesterol 205 → 171; uric acid 7.2 → 6.6</span>
+        </div>
+      </div>
+    </div>
+    <p class="two-col-note">These also anchor the cohort-level outcome the symptom table understates: in the clinician weight-loss cohort, <strong class="hl">52% of n=136 lost weight, averaging 2.03 kg/month</strong> — a cleaner, denominator-anchored figure than the 47% "weight gain resolved" self-report row in §06.</p>
+    <p class="src">Source: <code>sources/clinical/user-cohort-case-studies-2025.md</code> (dated case arcs + cohort rollups: irregular-cycle n=109/44%, weight-loss n=136/52%/2.03 kg-mo, metabolic n=148/20%), originating from Dr. Nivedita Gautam's "User Cohort + Case studies" (created 2025-10-09, updated 2026-02-11) with dated per-case weight and cycle tables, circulated team-wide (2026-01/2026-06 threads). Clinician-selected cases; same cherry-pick + co-medication caveats as the biomarker table above. Mukti was concurrently on Thyronorm 125 mcg (hypothyroidism); metformin is documented only as prior history, not concurrent; the long-cases had no other concurrent thyroid/diabetes medication documented — the weight and liver/lipid deltas are the protocol-plausible ones.</p>
+  </section>
+
+  <!-- ===================== 08 B2B COHORTS ===================== -->
+  <section id="b2b">
+    <h2><span class="num">08</span>B2B cohorts — validated-instrument outcomes <span class="lab sub">MWQ / LQ</span></h2>
+    <p class="lede">Two employer-paid cohorts (Deloitte, Advatix) were measured with <strong class="hl">internal Laiqa self-report questionnaires</strong> — MWQ (Menstrual Wellness) and LQ (Lifestyle Quotient). They reveal a structural pattern we take seriously: <strong class="hl">employer-paid cohorts completed at far higher rates than B2C.</strong> The cohorts aren't like-for-like, so we read it as who-pays affecting persistence, not yet a proven decoupling.</p>
+    <div class="split">
+      <div class="card">
+        <h4>Deloitte — 2-month cohort (n=150)</h4>
+        <div class="bar-row"><span class="name">Fully active</span><div class="bar-track"><div class="bar-fill teal" style="width:94%"></div></div><span class="val">94%</span></div>
+        <div class="bar-row"><span class="name">Weekly participation</span><div class="bar-track"><div class="bar-fill teal" style="width:90.9%"></div></div><span class="val">91%</span></div>
+        <div class="bar-row"><span class="name">Completed 2 months</span><div class="bar-track"><div class="bar-fill teal" style="width:72%"></div></div><span class="val">108/150</span></div>
+        <p class="two-col-note" style="margin:8px 0 0">Population-health migration M1→M2: good sleep 52.6%→65.8%; high activity 5%→24%; obese 26%→21%; low menstrual pain 42%→58%. LQ +5.7. Domain improvement: mental health 62.1%, gut 52.4%, skin &amp; hair 27.9%.</p>
+      </div>
+      <div class="card">
+        <h4>Advatix — 12-month cohort (n=24)</h4>
+        <div class="bar-row"><span class="name">MWQ (by month 4)</span><div class="bar-track"><div class="bar-fill teal" style="width:87%"></div></div><span class="val">67→87%*</span></div>
+        <div class="bar-row"><span class="name">BMI reduced (ow/obese)</span><div class="bar-track"><div class="bar-fill teal" style="width:75%"></div></div><span class="val">75%</span></div>
+        <div class="bar-row"><span class="name">Avg BMI drop</span><div class="bar-track"><div class="bar-fill teal" style="width:74%"></div></div><span class="val">−7.5</span></div>
+        <p class="two-col-note" style="margin:8px 0 0">Validated MWQ sub-scores: Control +18.4pp, Pain +17.7pp, Concentration +17.2pp. LQ: activity +142.6 MET-min, sleep (SATED) +0.8, perceived stress improved.</p>
+      </div>
+    </div>
+    <div class="banner caveat" style="margin-top:18px">
+      <b>Three honest caveats.</b> (0) <b>Concentration: Deloitte is ~85% of the B2B book</b> (1,863 of 2,201 records; ~42% of the entire dataset) — the B2B signal leans heavily on one employer at a 1–2 month checkpoint. (1) The Deloitte MWQ migration is computed on <b>38 of 150 (~25%) who filled progress data</b> — the same completer-denominator discipline as B2C applies. (2) B2B outcomes exist only at the 1–2 month checkpoint for Deloitte (no 3m/6m follow-up); the Advatix MWQ was measured at month 4. The two cohorts used different clinician-logging modes and should not be compared head-to-head on outcome rates. (3) The <b>Advatix −7.5 BMI</b> figure (32.5→25.0) is exceptional — roughly 20 kg of weight loss for an average-height user — and is computed on the overweight/obese users of the n=24 cohort, a subset that also skews to consistently-engaged users. The <b>MWQ 67→87% is likewise among consistently engaged users*, not all 24</b>. Treat as upper-bound signals, not typical-user expectations. The genuine finding is the <b>completion contrast: ~72–94% (employer-paid) vs ~50% (B2C self-paid)</b>. Read alongside the B2C drop-off data (§10: dissatisfaction with results just 4.6%), this points <em>directionally</em> to drop-off being driven by who-pays rather than whether-it-works — but the two cohorts are not like-for-like, so treat this as a strong hypothesis, not a proven decoupling.
+    </div>
+    <p class="src">Source: <code>sources/clinical/b2b-deloitte-2month-report.md</code>, <code>sources/clinical/b2b-advatix-cohort-report.md</code> (ingested 2026-06-09 from the Deloitte progress report + Final Advatix Report).</p>
+  </section>
+
+  <!-- ===================== 09 EVIDENCE BASIS ===================== -->
+  <section id="evidence">
+    <h2><span class="num">09</span>The evidence basis — is the protocol grounded?</h2>
+    <p class="lede">Protocol quality also means the interventions are derived from evidence, not invented. They are — with named citations and a defined evidence-grading model — though with one honest boundary about what is shipped today.</p>
+    <div class="split">
+      <div class="card">
+        <h4>Protocols trace to peer-reviewed sources</h4>
+        <ul style="margin:0;font-size:14.5px">
+          <li>The macronutrient-cycling and seed-cycling protocols cite Varady &amp; Hellerstein 2007, Harvie &amp; Howell 2017, Paoli 2012, Paddon-Jones 2008 (AJCN reviews).</li>
+          <li><b>Myo-inositol</b> carries Tier-1 PCOS evidence; used in the womb-healing protocol.</li>
+          <li><b>CBT for amenorrhea RCT: 87.5% resumed ovarian activity vs 25% observation-only</b> — backs the mind-body/stress arm.</li>
+          <li>The stress×emotional-eating×sleep mechanism (cortisol/insulin drivers) is grounded in Dweck et al. 2014, <em>Appetite</em> (3-way interaction F=5.52, p=.022).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>A defined evidence-grading model</h4>
+        <p class="two-col-note" style="margin:0 0 8px">A T1–T5 tiering system (meta-analysis → traditional-consensus), two-gate clinician approval per claim, and a <b>Tier-0</b> layer of internal clinician-confirmed Laiqa case evidence (highest population-fit for Indian women).</p>
+        <p class="two-col-note" style="margin:0"><b>Current state:</b> today's recommendations are clinician-authored and grounded in the sources cited above and our internal Tier-0 case dataset.</p>
+      </div>
+    </div>
+    <p class="src">Source: <code>sources/research/protocols-and-paper-read.md</code>, <code>sources/Evidence Basing Our Product.docx</code>, <code>wiki/evidence.md</code>, <code>sources/Emotional Eating and Sleep Influence.pdf</code> (Dweck 2014, full text), <code>wiki/regulatory.md</code>.</p>
+  </section>
+
+  <!-- ===================== 10 RETENTION ===================== -->
+  <section id="retention">
+    <h2><span class="num">10</span>Completion, compliance &amp; renewal-by-results</h2>
+    <p class="lede">The honest denominator behind every outcome, and the evidence that improvement — not price — drives the ones who came back.</p>
+    <div class="split">
+      <div class="card">
+        <h4>Completion (B2C, n=36 narrative report)</h4>
+        <div class="bar-row"><span class="name">Recorded improvement</span><div class="bar-track"><div class="bar-fill teal" style="width:50%"></div></div><span class="val">18</span></div>
+        <div class="bar-row"><span class="name">Could not follow plan</span><div class="bar-track"><div class="bar-fill" style="width:25%;background:linear-gradient(90deg,#b23a48,#d06b76)"></div></div><span class="val">9</span></div>
+        <div class="bar-row"><span class="name">&lt;1 month, incomplete</span><div class="bar-track"><div class="bar-fill" style="width:14%;background:linear-gradient(90deg,#b9770e,#d6a24a)"></div></div><span class="val">5</span></div>
+        <div class="bar-row"><span class="name">Pending / paused / EMI</span><div class="bar-track"><div class="bar-fill" style="width:11%;background:#9a9aa8"></div></div><span class="val">4</span></div>
+        <p class="two-col-note" style="margin:8px 0 0">Follow-up <em>logging</em> discipline (the hardest-to-fake signal — says a real clinical follow-up process tracked its patients): <b>85.2% at 1m</b>, 50% at 3m, 30% at 6m. The 36-patient narrative sample above reflects B2C logistics friction; the 180-patient outcomes cohort achieved 85% 1-month follow-up, which is the ITT denominator used in §06.</p>
+      </div>
+      <div class="card">
+        <h4>Why people leave — and why they stay</h4>
+        <p class="two-col-note" style="margin:0 0 8px"><b>Churn is logistics &amp; finance, not dissatisfaction.</b> Coded drop-off (n=256): compliance 39%, financial 23%, "managing on her own" 20% — <b>dissatisfaction with results just 4.6%.</b></p>
+        <p class="two-col-note" style="margin:0"><b>Renewal is driven by results.</b> Of coded renewal reasons (n=21), <b>~67% cited "got results / health improved"</b> (small n — only 21 of ~1,045 rows were reason-coded). <em>We acquire on weight, but we retain on felt chronic-symptom relief.</em></p>
+      </div>
+    </div>
+    <h3>Members prepaid for <em>months</em> of a chronic-care protocol</h3>
+    <p>Prepayment behaviour: the share of paying patients on <strong class="hl">6- and 12-month plans climbed from 4.5% (Sep 2025) to 38.6% (Mar 2026), rising every single month</strong> — monotonic, no dips. Note: part of the climb is mechanical — the 12-month plan only entered the active mix in Oct 2025 — so we read the curve as willingness-to-prepay growing within a changing plan catalogue, not pure conviction.</p>
+    <div class="card">
+      <h4>Share of paying patients on 6m+12m plans (monotonic climb)</h4>
+      <div class="bar-row"><span class="name">Sep 2025</span><div class="bar-track"><div class="bar-fill" style="width:11.7%"></div></div><span class="val">4.5%</span></div>
+      <div class="bar-row"><span class="name">Nov 2025</span><div class="bar-track"><div class="bar-fill" style="width:44%"></div></div><span class="val">17.1%</span></div>
+      <div class="bar-row"><span class="name">Jan 2026</span><div class="bar-track"><div class="bar-fill" style="width:74%"></div></div><span class="val">28.4%</span></div>
+      <div class="bar-row"><span class="name">Mar 2026</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="val">38.6%</span></div>
+    </div>
+    <p>The compliance bar is deliberately ~70–80%, not 100% — <em>"a plan 60% followed is an untested plan, not a failed one."</em></p>
+    <p class="src">Source: prepay tenure-mix from <code>traction.md</code> §3.3 (historical B2C plan-tenure, Sep'25→Mar'26: 4.5/9.2/17.1/26.1/28.4/33.8/38.6%); drop-off + renewal-reason buckets from <code>revenue-leaderboard-deep-read.md</code>. Lifetime paid-renewal context: <b>8.1% of paid B2C users took a 2nd plan</b> (77 of 946, prod-DB; ~10% when rounded) — a different denominator from the curated renewal-reasons sheet above.</p>
+  </section>
+
+  <!-- ===================== 11 LIMITATIONS ===================== -->
+  <section id="limits">
+    <h2><span class="num">11</span>Safety, non-responders &amp; honest limitations</h2>
+    <p class="lede">An outcomes report that only counts wins is not credible. The same sources record harm signals, non-responders, and structural ceilings — disclosing them is what makes everything above believable.</p>
+    <div class="split">
+      <div class="card">
+        <h4>Safety / adverse signals on record</h4>
+        <ul style="margin:0;font-size:14.5px">
+          <li><b>Prolonged bleeding</b> — a churned user reported "3 months continuously" after the protocol; an induction agent (Rajpravartani Vati) triggered a 10-day bleed in another case → diagnostic workup.</li>
+          <li><b>Symptom worsening</b> — one user logged "stress — no improvement, in fact increased."</li>
+          <li><b>Mid-plan hospitalisation</b> (dengue — not protocol-caused, forced a pause).</li>
+          <li><b>Procedure risk</b> — Virechana (therapeutic purgation) + herbs taken alongside levothyroxine/metformin/OCPs; interaction/over-purgation risk not systematically tracked.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Structural limitations</h4>
+        <ul style="margin:0;font-size:14.5px">
+          <li><b>No systematic adverse-event register</b> — harm surfaces only incidentally; the true rate is unknown and almost certainly under-counted.</li>
+          <li><b>No control / comparator arm</b> — improvements cannot be causally attributed to the protocol; cycle/skin conditions also regress naturally.</li>
+          <li><b>Cherry-picked biomarkers</b>, co-medication confounds, non-standardised imaging.</li>
+          <li><b>All counts use the latest DB-verified figures</b>: 947 strict paying patients, ~2,900 consultations, 5 doctors across the full programme period.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="banner thesis" style="margin-top:18px">
+      <b>The defensible bottom line.</b> Laiqa ran a rigorous, personalised, clinically-governed protocol on ~1,400 women across the hormonal-metabolic spectrum — analysed across symptom check-ins, app-tracked cycles, employer-cohort questionnaires and paired labs, and grounded in named evidence. It produced self-reported symptom resolution of 84–87% for top clusters among those followed up (≈72–74% intention-to-treat on the 85.2% follow-up denominator), validated-questionnaire gains in two employer cohorts, and curated biomarker/imaging reversals — with churn driven by logistics not dissatisfaction (4.6%) and renewal driven by results (~67%). On the <span class="lab obj">objective</span> cycle data, ~41–53% of trackable users have regular cycles today, but a within-user causal test does not yet show the protocol drives regularisation (§05) — we report that plainly rather than over-claim. With the outcome marker being our own clinical team, this is a case series, not an efficacy claim — what it is <em>not</em> yet is a controlled, registered trial that can prove causation, with a complete safety denominator. The asset is a rare real-world dataset and a disciplined protocol.
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><b>Provenance.</b> Compiled 9 Jun 2026 from the Laiqa <code>Product_context</code> knowledge base. Demand &amp; outcomes: <code>sources/research/patient-concerns-deep-read.md</code>, <code>mom-improvement-outcomes.md</code>, <code>revenue-leaderboard-deep-read.md</code>; cohort/cases: <code>sources/clinical/user-cohort-case-studies-2025.md</code>, <code>user-concerns-improvement-report.md</code>, <code>renewals-by-concern.md</code>, <code>Case Studies Final Deck.pptx</code>; B2B: <code>sources/clinical/b2b-deloitte-2month-report.md</code>, <code>b2b-advatix-cohort-report.md</code>; methodology &amp; protocol: <code>wiki/clinical/health-score.md</code>, <code>measurement-matrix.md</code>, <code>drivers.md</code>, <code>driver-change-rules.md</code>, <code>driver-combinations.md</code>, <code>decision-tree.md</code>, condition packs; population &amp; objective signal: <code>sources/Laiqa Clinical Agent Training.md</code>, <code>research/applications/2026-06-02-series-a-deck*</code>; evidence basis: <code>protocols-and-paper-read.md</code>, <code>wiki/evidence.md</code>, <code>Emotional Eating and Sleep Influence.pdf</code>, <code>wiki/regulatory.md</code>.</p>
+    <p><b>Handling.</b> Patient identifiers and per-case identifying detail have been removed from the case narratives; aggregate statistics and methodology are unchanged. The full internal edition, which carries patient names and clinical detail, is not shared externally. Self-contained HTML; no external dependencies.</p>
+  </div>
+
+</div>
+</body>
+</html>
