@@ -116,7 +116,7 @@
     </div>
     <div class="grid kpis" style="grid-template-columns:repeat(5,1fr);margin-top:8px">
       <div class="kpi alt"><div class="big">84–87%</div><div class="lbl">clinician-documented symptom resolution in the historical (pre-Apr-2026) cohort, in three of nine symptom clusters, among patients with a documented 1-month follow-up. Clinician-documented by the treating team; not independently validated; concurrent medication not systematically documented. See §4 for what "resolution" means per cluster.</div></div>
-      <div class="kpi alt"><div class="big">~72–74%</div><div class="lbl">conservative completion-adjusted rate for the same three symptom clusters, based on the observed endpoint-capture rate (not a cohort-wide rate; see §4)</div></div>
+      <div class="kpi alt"><div class="big">~72–74%</div><div class="lbl">completion-adjusted estimate for the same three symptom clusters, based on the observed endpoint-capture rate (not a cohort-wide rate; see §4)</div></div>
       <div class="kpi alt"><div class="big">41%</div><div class="lbl">of users with ≥3 logged cycles (37 of 90) meeting Laiqa's current cycle-regularity definition</div></div>
       <div class="kpi alt"><div class="big">48%</div><div class="lbl">of the paired cycle-variability subset (11 of 23) improved — does not establish a causal treatment effect</div></div>
       <div class="kpi alt"><div class="big">52%</div><div class="lbl">of the clinician weight-loss cohort (n=136) recorded weight loss; reported average ~2.03 kg/month among those who lost. Member-logged, not clinic-measured; co-medication not systematically documented.</div></div>
@@ -234,7 +234,7 @@
   <!-- ===================== 4 CORE CLINICAL OUTCOMES ===================== -->
   <section id="outcomes">
     <h2><span class="num">4</span>Core clinical outcomes</h2>
-    <p class="lede">Two outcome domains are presented: app-tracked menstrual-cycle regularity (objective, descriptive) and clinician-documented symptom resolution (observational). Neither is an efficacy estimate from a controlled trial.</p>
+    <p class="lede">Two outcome domains are presented: app-derived menstrual-cycle regularity (descriptive) and clinician-documented symptom resolution (observational). Neither is an efficacy estimate from a controlled trial.</p>
 
     <h3>App-derived longitudinal outcome: menstrual-cycle regularity</h3>
     <p>Regularity is defined as a cycle-length standard deviation under 5 days, the programme's pre-specified criterion. Cycle length is the gap between consecutive logged period-start dates, filtered to 10–120 days.</p>
@@ -251,11 +251,11 @@
     <h3>Clinician-documented symptom resolution</h3>
     <p class="two-col-note"><b>Among patients with documented 1-month follow-up (n=180).</b> n=180 is the number of patients with any logged 1-month endpoint; of the 108 patients who started a 1-month plan, 92 (85.2%) had that endpoint logged. These are different denominators, used for different purposes below.</p>
     <div class="banner caveat">
-      <b>Clinician-documented symptom resolution; not independently validated.</b> Resolution was recorded by the treating clinicians at the month-1 check-in from the patient's chart. These data are subject to observational limitations including follow-up selection, documentation variability, clinician assessment, regression to the mean, lack of a control group, and concurrent medication that was not systematically documented for these outcomes. Of the nine clusters, hair fall, acne and irregular periods show the highest resolution; bloating and acidity have lower recorded resolution, but may provide a more conservative signal because these symptoms are actively re-asked at follow-up.
+      <b>Clinician-documented symptom resolution; not independently validated.</b> Resolution was recorded by the treating clinicians at the month-1 check-in from the patient's chart. These data are subject to observational limitations including follow-up selection, documentation variability, clinician assessment, regression to the mean, lack of a control group, and concurrent medication that was not systematically documented for these outcomes. Of the nine clusters, hair fall, acne and irregular periods show the highest recorded resolution. Bloating and acidity show lower recorded resolution, but may provide a more conservative signal because these symptoms are actively re-asked at follow-up.
     </div>
     <div class="card">
       <table>
-        <tr><th>Symptom cluster</th><th class="num">Of those followed up</th><th class="num">Completion-adjusted rate*</th></tr>
+        <tr><th>Symptom cluster</th><th class="num">Of those followed up</th><th class="num">Completion-adjusted estimate*</th></tr>
         <tr><td>Hair fall</td><td class="num"><b>45/52 (87%)</b></td><td class="num">~74%</td></tr>
         <tr><td>Acne</td><td class="num"><b>31/36 (86%)</b></td><td class="num">~73%</td></tr>
         <tr><td>Irregular periods</td><td class="num"><b>91/109 (84%)</b></td><td class="num">~72%</td></tr>
@@ -266,8 +266,8 @@
         <tr><td>Acidity</td><td class="num"><b>13/46 (28%)</b></td><td class="num">~24%</td></tr>
         <tr><td>Bloating</td><td class="num"><b>18/92 (20%)</b></td><td class="num">~17%</td></tr>
       </table>
-      <p class="note" style="margin:8px 0 0">*<b>Conservative endpoint-completion-adjusted rate.</b> Patients without a recorded follow-up endpoint are treated as unresolved. The observed endpoint-capture rate (85.2%; 92 of 108 one-month-plan starters had a logged follow-up endpoint) is applied to the documented resolution rate. This is a transparency adjustment about follow-up capture; it is not a conventional clinical-trial intention-to-treat analysis. It is conservative relative to the per-completer rates above, but it assumes patients without a captured endpoint resemble those with one; if the uncaptured patients differ systematically, the estimate could differ in either direction. These estimates inherit the co-treatment disclosure above: concurrent medication was not systematically documented.</p>
-      <p class="note" style="margin:4px 0 0">Note on interpretation: hair fall and acne show the highest resolution partly because chronic diagnoses tend to be logged once at baseline; bloating and acidity have lower recorded resolution, but may provide a more conservative signal because these symptoms are actively re-asked at follow-up. A one-month check-in is too short to call a menstrual-cycle outcome — "irregular periods" here means the symptom was no longer recorded at the check-in, not that cycles normalised (see the cycle-regularity section above). The per-cluster resolution rates here (up to 84–87% for the three highest clusters) are a different measure from the strict-verb, whole-cohort "explicit documented improvement" of 11% at month 1 shown in Appendix D; the two are not comparable.</p>
+      <p class="note" style="margin:8px 0 0">*<b>Illustrative completion-adjusted estimate:</b> the per-completer resolution rate is multiplied by the overall observed 1-month endpoint-capture rate of 85.2%. This is a modelling adjustment based on an assumption of uniform endpoint capture across symptom clusters; it is not a patient-level missing-as-unresolved analysis and is not a conventional clinical-trial ITT analysis. These estimates inherit the co-treatment disclosure above: concurrent medication was not systematically documented.</p>
+      <p class="note" style="margin:4px 0 0">Note on interpretation: hair fall and acne show the highest recorded resolution partly because chronic diagnoses tend to be logged once at baseline; bloating and acidity show lower recorded resolution, but may provide a more conservative signal because these symptoms are actively re-asked at follow-up. A one-month check-in is too short to call a menstrual-cycle outcome — "irregular periods" here means the symptom was no longer recorded at the check-in, not that cycles normalised (see the cycle-regularity section above). The per-cluster resolution rates here (up to 84–87% for the three highest clusters) are a different measure from the strict-verb, whole-cohort "explicit documented improvement" of 11% at month 1 shown in Appendix D; the two are not comparable.</p>
     </div>
     <p class="src">A by-month analysis of continuing members (improvement share rising from 11% at month 1, n=180, to ~30% by months 3–4, n=24–15) is shown in Appendix D with the survivorship caveat that applies to it.</p>
   </section>
@@ -384,7 +384,7 @@
     <div class="banner thesis" style="margin-top:8px">
       Laiqa has accumulated a substantial real-world dataset across clinician consultations, longitudinal patient records, patient-reported outcomes and selected laboratory/imaging observations.
       <br><br>
-      Clinician-documented symptom resolution was recorded for several high-frequency concerns among patients with documented follow-up, with completion-adjusted rates providing a conservative view of endpoint capture. Selected laboratory and imaging cases provide additional objective evidence, but these cases are clinician-selected and do not establish cohort-level efficacy.
+      Clinician-documented symptom resolution was recorded for several high-frequency concerns among patients with documented follow-up, with completion-adjusted estimates providing a conservative view of endpoint capture. Selected laboratory and imaging cases provide additional objective evidence, but these cases are clinician-selected and do not establish cohort-level efficacy.
       <br><br>
       On the objective cycle data, a proportion of trackable users currently have regular cycles, but the available within-user analysis does not yet demonstrate that Laiqa causes cycle regularisation.
       <br><br>
@@ -429,10 +429,10 @@
     <p>Symptom resolution is measured at the 1-month check-in. Follow-up logging across the cohort: 85.2% at 1 month, 50% at 3 months, 30% at 6 months. The by-month improvement series runs to 4 months with shrinking n (see Appendix D).</p>
 
     <h3>A.5 Missing-data handling</h3>
-    <p>The conservative endpoint-completion-adjusted rate treats patients without a recorded 1-month endpoint as unresolved, using the observed endpoint-capture rate (85.2%; 92 of 108 one-month-plan starters). Patients with no usable weight trend are excluded from the weight cohort (n=136 of a larger treated set).</p>
+    <p>The completion-adjusted estimate multiplies the per-completer resolution rate by the overall observed 1-month endpoint-capture rate of 85.2% (92 of 108 one-month-plan starters). Patients with no usable weight trend are excluded from the weight cohort (n=136 of a larger treated set).</p>
 
     <h3>A.6 Completion-adjusted calculation methodology</h3>
-    <p>The "conservative endpoint-completion-adjusted rate" applies the observed endpoint-capture rate (85.2%) to the documented resolution rate for each symptom cluster, treating patients without a recorded endpoint as unresolved. It is conservative relative to the per-completer rates, but assumes uncaptured patients resemble captured ones. It is a transparency adjustment for follow-up capture and is not a conventional clinical-trial intention-to-treat analysis.</p>
+    <p>The completion-adjusted estimate multiplies the per-completer resolution rate by the overall observed 1-month endpoint-capture rate of 85.2% for each symptom cluster. This is a modelling adjustment based on an assumption of uniform endpoint capture across symptom clusters; it is not a patient-level missing-as-unresolved analysis and is not a conventional clinical-trial ITT analysis.</p>
 
     <h3>A.7 Objective-case selection methodology</h3>
     <p>The ~29 lab/imaging cases were selected by clinicians from cases with paired before/after laboratory or imaging observations attached to consultations. They are selected positive cases and are presented as case evidence, not as cohort-level estimates.</p>
